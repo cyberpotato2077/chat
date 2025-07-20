@@ -2,6 +2,7 @@
   "name": "chat-monorepo",
   "private": true,
   "scripts": {
-    "dev": "pnpm --filter web-client dev"
+    "dev": "pnpm --filter web-client dev",
+    "dev:server": "pnpm --filter lmstudio-server start:dev"
   }
 }
