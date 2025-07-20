@@ -15,11 +15,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v2
         with:
-            version: 10.9.0
-        
+          # pnpm filter를 사용하여 변경된 패키지를 감지하려면 전체 git 기록이 필요합니다.
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+
       - name: Read Node.js version from .nvmrc
         id: node
         run: echo "version=$(cat .nvmrc)" >> $GITHUB_OUTPUT
@@ -30,17 +31,13 @@ jobs:
           node-version: ${{ steps.node.outputs.version }}
           cache: 'pnpm'
 
-      - name: Create .env file from secret
-        run: |
-          echo "POSTGRES_URL=${{ secrets.POSTGRES_URL }}" >> .env
-          echo "SUPABASE_JWT_SECRET=${{ secrets.SUPABASE_JWT_SECRET }}" >> .env
-          
-
-      - name: Install pnpm
-        run: npm install -g pnpm
-
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build project
-        run: pnpm build
+      - name: Build changed packages (for PRs)
+        if: github.event_name == 'pull_request'
+        run: pnpm --filter="...[main]" --if-present build
+
+      - name: Build all packages (for main branch)
+        if: github.event_name == 'push'
+        run: pnpm --recursive --if-present build
