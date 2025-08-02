@@ -1,6 +1,7 @@
 {
   "name": "chat-monorepo",
   "private": true,
+  "packageManager": "pnpm@10.9.0",
   "scripts": {
     "dev": "pnpm --filter web-client dev",
     "dev:server": "pnpm --filter lmstudio-server start:dev"
