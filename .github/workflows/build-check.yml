@@ -36,7 +36,7 @@ jobs:
 
       - name: Build changed packages (for PRs)
         if: github.event_name == 'pull_request'
-        run: pnpm --filter="...[main]" --if-present build
+        run: pnpm --filter="...[origin/${{ github.base_ref }}]" --if-present build
 
       - name: Build all packages (for main branch)
         if: github.event_name == 'push'
